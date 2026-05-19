@@ -4,7 +4,13 @@
    ============================================================ */
 
 const DATA_SRC = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026';
+// EDITA ESTAS 3 COSAS POR FAVOR
+// POR FAVOR
 const LEADERBOARD_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDbPhOej3DnN_bdvrCQ5R0T6HZg6bBaxKdH17J_Pc3oGOkKkd9V83BUDYlBSCevOrqYK2XQuA7ZMCx/pub?gid=1633860364&single=true&output=csv'
+const FORM_ID = '1FAIpQLSdiF0qsK65DcaadNKRzDbue8xtkzAIIev-7yqUqAH3srhEAQg';
+const ENTRY_ID = 'entry.496944209';
+// REPITO, POR FAVOR
+
 const FLAG_CODE = {
   'Mexico':'mx','South Africa':'za','South Korea':'kr','Czech Republic':'cz',
   'Canada':'ca','Bosnia & Herzegovina':'ba','Qatar':'qa','Switzerland':'ch',
@@ -1482,8 +1488,6 @@ function parseCSV(text) {
 }
 
 // ---- Submit ----
-const FORM_ID = '1FAIpQLSdiF0qsK65DcaadNKRzDbue8xtkzAIIev-7yqUqAH3srhEAQg';
-const ENTRY_ID = 'entry.496944209';
 const FORM_ACTION = 'https://docs.google.com/forms/d/e/'+FORM_ID+'/formResponse';
 
 function submitPrediction() {
