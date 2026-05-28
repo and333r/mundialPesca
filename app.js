@@ -31,7 +31,7 @@ const puntuaciones = {
     topAssister: 5,
     goldenGlove: 5,
     topScoringTeam: 5,
-    surpriseTeam: 8
+    mostConcededTeam: 8
   }
 };
 
@@ -42,8 +42,8 @@ const AWARDS_CONFIG = [
   { key: 'topScorer',      selectId: 'awardTopScorer',      kind: 'player', emoji: '🥇', label: 'Máximo Goleador',          points: puntuaciones.premios.topScorer },
   { key: 'topAssister',    selectId: 'awardTopAssister',    kind: 'player', emoji: '🎯', label: 'Máximo Asistente',         points: puntuaciones.premios.topAssister },
   { key: 'goldenGlove',    selectId: 'awardGoldenGlove',    kind: 'player', emoji: '🧤', label: 'Guante de Oro (portero)',  points: puntuaciones.premios.goldenGlove },
-  { key: 'topScoringTeam', selectId: 'awardTopScoringTeam', kind: 'team',   emoji: '⚽', label: 'Equipo Más Goleador',      points: puntuaciones.premios.topScoringTeam },
-  { key: 'surpriseTeam',   selectId: 'awardSurpriseTeam',   kind: 'team',   emoji: '😱', label: 'Sorpresa del Mundial',     points: puntuaciones.premios.surpriseTeam }
+  { key: 'topScoringTeam',    selectId: 'awardTopScoringTeam',    kind: 'team',   emoji: '⚽', label: 'Equipo Más Goleador',      points: puntuaciones.premios.topScoringTeam },
+  { key: 'mostConcededTeam',  selectId: 'awardMostConcededTeam',  kind: 'team',   emoji: '🥅', label: 'Equipo Más Goleado',       points: puntuaciones.premios.mostConcededTeam }
 ];
 
 const AWARD_SELECT_IDS = AWARDS_CONFIG.map(a => a.selectId);
@@ -1764,7 +1764,12 @@ function ensureAwardPickerModal() {
     <div class="award-picker-modal" role="dialog" aria-modal="true">
       <button type="button" class="prediction-modal-close award-picker-close" aria-label="Cerrar">×</button>
       <h3 id="awardPickerTitle">Elegir</h3>
+      <div class="award-picker-search">
+        <input type="text" id="awardPickerSearch" class="award-picker-search-input"
+               placeholder="Buscar por nombre o país..." autocomplete="off" spellcheck="false">
+      </div>
       <div class="award-picker-list" id="awardPickerList"></div>
+      <div class="award-picker-empty" id="awardPickerEmpty" style="display:none;">Sin resultados</div>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -1781,6 +1786,9 @@ function ensureAwardPickerModal() {
     }
   });
 
+  const searchInput = overlay.querySelector('#awardPickerSearch');
+  searchInput.addEventListener('input', () => filterAwardPickerOptions(searchInput.value));
+
   return overlay;
 }
 
@@ -1789,6 +1797,39 @@ function closeAwardPickerModal() {
   if (!overlay) return;
   overlay.style.display = 'none';
   overlay.dataset.selectId = '';
+  const search = overlay.querySelector('#awardPickerSearch');
+  if (search) search.value = '';
+}
+
+function normalizeAwardSearchText(s) {
+  return (s || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function filterAwardPickerOptions(query) {
+  const overlay = document.getElementById('awardPickerModal');
+  if (!overlay) return;
+  const list = overlay.querySelector('#awardPickerList');
+  const emptyMsg = overlay.querySelector('#awardPickerEmpty');
+  const q = normalizeAwardSearchText(query);
+  let visible = 0;
+  list.querySelectorAll('.award-picker-option').forEach(opt => {
+    // The "Sin elegir" option (data-value="") is always shown.
+    if (!opt.dataset.value) {
+      opt.style.display = '';
+      visible++;
+      return;
+    }
+    const haystack = opt.dataset.search || '';
+    const match = !q || haystack.indexOf(q) !== -1;
+    opt.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  if (emptyMsg) emptyMsg.style.display = visible <= 1 && q ? 'block' : 'none';
 }
 
 function openAwardPickerModal(select) {
@@ -1817,6 +1858,7 @@ function openAwardPickerModal(select) {
       option.type = 'button';
       option.className = 'award-picker-option' + (currentValue === player.name ? ' selected' : '');
       option.dataset.value = player.name;
+      option.dataset.search = normalizeAwardSearchText(player.name + ' ' + player.country);
       option.innerHTML = `
         <span class="team-flag ${getFlagClass(player.country)}"></span>
         <span class="award-player-name">${escapeHtml(player.name)}</span>
@@ -1830,6 +1872,7 @@ function openAwardPickerModal(select) {
       option.type = 'button';
       option.className = 'award-picker-option' + (currentValue === team.name ? ' selected' : '');
       option.dataset.value = team.name;
+      option.dataset.search = normalizeAwardSearchText(team.name + ' ' + (team.group || ''));
       option.innerHTML = `
         <span class="team-flag ${getTeamFlagClass(team.name)}"></span>
         <span class="award-player-name">${escapeHtml(team.name)}</span>
@@ -1855,6 +1898,12 @@ function openAwardPickerModal(select) {
   };
 
   overlay.style.display = 'flex';
+  const searchInput = overlay.querySelector('#awardPickerSearch');
+  if (searchInput) {
+    searchInput.value = '';
+    filterAwardPickerOptions('');
+    setTimeout(() => searchInput.focus(), 50);
+  }
 }
 
 function buildAwardCustomSelect(select) {

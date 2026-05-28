@@ -1672,6 +1672,39 @@ header .subtitle {
   right: 16px;
 }
 
+.award-picker-search {
+  margin: 0 0 12px;
+}
+
+.award-picker-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-text);
+  background: var(--light-bg);
+  border: 2px solid #C8E6C9;
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.award-picker-search-input:focus {
+  outline: none;
+  border-color: var(--grass-green);
+  box-shadow: 0 0 0 3px rgba(76,175,80,0.15);
+}
+
+.award-picker-empty {
+  text-align: center;
+  padding: 18px 12px;
+  color: var(--dark-text);
+  opacity: 0.75;
+  font-weight: 700;
+  font-style: italic;
+}
+
 .award-picker-list {
   display: grid;
   grid-template-columns: 1fr;

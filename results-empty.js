@@ -64,13 +64,13 @@ const RESULTS = {
   // 5 categorías divertidas — todas son una sola elección por categoría.
   // "topScorer", "topAssister" y "goldenGlove" esperan el NOMBRE de un jugador
   //   (de los listados en AWARD_PLAYERS dentro de app.js).
-  // "topScoringTeam" y "surpriseTeam" esperan el NOMBRE de una selección
+  // "topScoringTeam" y "mostConcededTeam" esperan el NOMBRE de una selección
   //   (tal y como aparece en los grupos).
   awards: {
-    topScorer: "",        // 🥇 Máximo Goleador (jugador)
-    topAssister: "",      // 🎯 Máximo Asistente (jugador)
-    goldenGlove: "",      // 🧤 Guante de Oro / Portero menos goleado (jugador)
-    topScoringTeam: "",   // ⚽ Equipo Más Goleador
-    surpriseTeam: ""      // 😱 Sorpresa del Mundial (equipo)
+    topScorer: "",         // 🥇 Máximo Goleador (jugador)
+    topAssister: "",       // 🎯 Máximo Asistente (jugador)
+    goldenGlove: "",       // 🧤 Guante de Oro / Portero menos goleado (jugador)
+    topScoringTeam: "",    // ⚽ Equipo Más Goleador
+    mostConcededTeam: ""   // 🥅 Equipo Más Goleado (equipo que recibe más goles)
   }
 };
