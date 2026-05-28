@@ -347,7 +347,6 @@ const AWARD_PLAYERS = [
   { name: 'Fafà Picault', country: 'Haiti' },
   { name: 'Jean-Eudes Maurice', country: 'Haiti' },
   { name: 'Jean Marc Alexandre', country: 'Haiti' },
-  { name: 'Louicius Don Deedson', country: 'Haiti' },
   { name: 'Mikael Cantave', country: 'Haiti' },
   { name: 'Wilde-Donald Joseph', country: 'Haiti' },
 
