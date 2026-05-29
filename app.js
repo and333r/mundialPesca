@@ -3730,7 +3730,7 @@ function renderLeaderboardList(submissions) {
 
       btn.innerHTML = `
         <span class="leaderboard-rank">#${index + 1}</span>
-        <span class="leaderboard-name">${entry.name}${teamLabel}</span>
+        <span class="leaderboard-name"><span>${entry.name}</span>${teamLabel}</span>
         <span class="leaderboard-score">${entry.score} pts</span>
       `;
 
