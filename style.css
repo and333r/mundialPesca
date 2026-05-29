@@ -773,9 +773,16 @@ header .subtitle {
 .leaderboard-name {
   color: var(--dark-text);
   overflow: hidden;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+.leaderboard-name > span:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .leaderboard-score {

@@ -3674,6 +3674,28 @@ const LKS_TEAMS = [
   'Servicios Generales'
 ];
 
+const TEAM_EMOJIS = {
+  'Consultoría Tecnológica': '💻',
+  'Consultoría de Negocio': '📊',
+  Legal: '⚖️',
+  'Servicios Generales': '🏢'
+};
+
+function populateTeamSelectOptions() {
+  const teamSelect = document.getElementById('teamSelect');
+  if (!teamSelect) return;
+
+  const defaultLabel = teamSelect.querySelector('option[value=""]')?.textContent || '— Elige tu equipo —';
+  teamSelect.innerHTML = `<option value="">${defaultLabel}</option>`;
+
+  LKS_TEAMS.forEach(team => {
+    const option = document.createElement('option');
+    option.value = team;
+    option.textContent = `${TEAM_EMOJIS[team] || ''} ${team}`.trim();
+    teamSelect.appendChild(option);
+  });
+}
+
 function renderLeaderboardList(submissions) {
   const container = document.getElementById('leaderboardContent');
 
@@ -3724,13 +3746,15 @@ function renderLeaderboardList(submissions) {
       btn.type = 'button';
       btn.className = 'leaderboard-entry';
 
+      const playerName = escapeHtml(entry.name);
+      const teamName = escapeHtml(entry.prediction.team);
       const teamLabel = entry.prediction.team
-        ? `<span class="leaderboard-team">${entry.prediction.team}</span>`
+        ? `<span class="leaderboard-team">${teamName}</span>`
         : '';
 
       btn.innerHTML = `
         <span class="leaderboard-rank">#${index + 1}</span>
-        <span class="leaderboard-name"><span>${entry.name}</span>${teamLabel}</span>
+        <span class="leaderboard-name"><span>${playerName}</span>${teamLabel}</span>
         <span class="leaderboard-score">${entry.score} pts</span>
       `;
 
@@ -4716,6 +4740,12 @@ async function confirmSubmitPrediction() {
     return;
   }
 
+  if (!LKS_TEAMS.includes(playerTeam)) {
+    showToast('Ese equipo no es válido. Elige uno de la lista.', true);
+    if (teamSelect) teamSelect.focus();
+    return;
+  }
+
   const payload = buildPayload();
   payload.name = playerName;
   payload.team = playerTeam;
@@ -4789,6 +4819,8 @@ async function init() {
   const ok = await loadData();
   hideLoading();
   if (!ok) { showToast('No hay datos del Mundial. Revisa la conexión y recarga (sí, otra vez).', true); return; }
+
+  populateTeamSelectOptions();
 
   // Clear stale localStorage from old incompatible data
   const v = localStorage.getItem(LOCAL_STORAGE_VERSION_KEY);
