@@ -1382,6 +1382,7 @@ const AWARD_PLAYERS = [
   { name: 'Nediljko Labrović', country: 'Croacia' },
   { name: 'Joško Gvardiol', country: 'Croacia' },
   { name: 'Marin Pongračić', country: 'Croacia' },
+  { name: 'Urtzyk Kalistenyk', country: 'Croacia' },
   { name: 'Josip Stanišić', country: 'Croacia' },
   { name: 'Josip Šutalo', country: 'Croacia' },
   { name: 'Borna Sosa', country: 'Croacia' },
