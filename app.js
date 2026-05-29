@@ -139,7 +139,8 @@ const FLAG_CODE = {
   'Francia':'fr','Senegal':'sn','Irak':'iq','Noruega':'no',
   'Argentina':'ar','Argelia':'dz','Austria':'at','Jordania':'jo',
   'Portugal':'pt','RD del Congo':'cd','Uzbekistán':'uz','Colombia':'co',
-  'Inglaterra':'gb-eng','Croacia':'hr','Ghana':'gh','Panamá':'pa'
+  'Inglaterra':'gb-eng','Croacia':'hr','Ghana':'gh','Panamá':'pa',
+  'Euskadi (País Vasco)':'es-pv'
 };
 
 const AWARD_PLAYERS = [
@@ -1487,7 +1488,11 @@ const AWARD_PLAYERS = [
   { name: 'Ismael Díaz', country: 'Panamá' },
   { name: 'Tomás Rodríguez', country: 'Panamá' },
   { name: 'Eduardo Guerrero', country: 'Panamá' },
-  { name: 'Azmahar Ariano', country: 'Panamá' }
+  { name: 'Azmahar Ariano', country: 'Panamá' },
+
+  // 🐣 Easter Egg — Euskadi (País Vasco)
+  { name: 'Aritz Puyol Galdos', country: 'Euskadi (País Vasco)' },
+  { name: 'Jon Escalador Dorronsoro', country: 'Euskadi (País Vasco)' }
 
 ];
 
