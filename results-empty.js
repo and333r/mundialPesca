@@ -28,6 +28,16 @@ const RESULTS = {
   // en orden (1º mejor tercero → 8º mejor tercero).
   thirdPlace: [],
 
+  // Quiniela 1X2 — resultados reales de los 3 partidos fijos.
+  // Valores admitidos: "1" (gana team1), "X" (empate), "2" (gana team2).
+  // Las claves coinciden con `[team1, team2].sort().join('__')` definido en
+  // QUINIELA_1X2_MATCHES dentro de app.js.
+  quiniela1x2: {
+    "Mexico__South Korea": "",
+    "Morocco__Scotland":   "",
+    "Spain__Uruguay":      ""
+  },
+
   knockout: {
     round32: [],
     round16: [],

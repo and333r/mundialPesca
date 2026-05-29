@@ -11,15 +11,17 @@ const ENTRY_ID = 'entry.479239932';
 const puntuaciones = {
   grupos: {
     posicion: {
-      primero: 4,
-      segundo: 3,
-      tercero: 2
+      primero: 5,
+      segundo: 5,
+      tercero: 5,
+      cuarto: 5
     },
-    mejorTercero: 1
+    mejorTercero: 5
   },
+  quiniela1x2: 1,
   eliminatorias: {
-    round32: 2,
-    round16: 3,
+    round32: 0,
+    round16: 5,
     quarterfinals: 5,
     semifinals: 10,
     finalist: 20,
@@ -47,6 +49,18 @@ const AWARDS_CONFIG = [
 ];
 
 const AWARD_SELECT_IDS = AWARDS_CONFIG.map(a => a.selectId);
+
+// ---- Quiniela 1X2 ----
+// 3 partidos predefinidos de la fase de grupos del Mundial 2026, elegidos al
+// azar de antemano (uno de ellos garantizado de España). Se validan contra el
+// calendario oficial (openfootball/worldcup.json) en `loadData` para asegurar
+// que realmente son partidos de la fase de grupos.
+// Formato 1X2: 1 = gana team1, X = empate, 2 = gana team2.
+const QUINIELA_1X2_MATCHES = [
+  { group: 'A', team1: 'Mexico',   team2: 'South Korea' },
+  { group: 'C', team1: 'Scotland', team2: 'Morocco'     },
+  { group: 'H', team1: 'Uruguay',  team2: 'Spain'       }
+].map(m => Object.assign(m, { key: [m.team1, m.team2].sort().join('__') }));
 
 function emptyAwardsState() {
   const empty = {};
@@ -1654,6 +1668,7 @@ let state = {
   groupsConfirmed: {},      // group letter -> boolean, true cuando el usuario haya confirmado la ordenación
   thirdPlace: [],           // Ranking elegido por el usuario de los 12 terceros (top 8 clasifican)
   thirdPlaceConfirmed: false,
+  quiniela1x2: {},          // matchKey -> '1' | 'X' | '2'
   matchTeams: {},           // matchId -> { team1, team2 }
   knockoutResults: {},      // matchId -> winner team name
   awards: emptyAwardsState()
@@ -1714,6 +1729,15 @@ function restoreLocalPrediction() {
     if (Array.isArray(data.thirdPlace) && data.thirdPlace.length) {
       state.thirdPlace = data.thirdPlace.slice();
       state.thirdPlaceConfirmed = Boolean(data.thirdPlaceConfirmed);
+    }
+
+    if (data.quiniela1x2 && typeof data.quiniela1x2 === 'object') {
+      const restored = {};
+      QUINIELA_1X2_MATCHES.forEach(m => {
+        const v = data.quiniela1x2[m.key];
+        if (v === '1' || v === 'X' || v === '2') restored[m.key] = v;
+      });
+      state.quiniela1x2 = restored;
     }
 
     if (data.knockout?.matches) {
@@ -1819,6 +1843,23 @@ async function loadData() {
       state.groups[g] = TEAMS_BY_GROUP[g].map(t => t.name);
     });
     ensureGroupsInitialized();
+
+    // Validar que los 3 partidos de la quiniela 1X2 son realmente partidos
+    // de la fase de grupos del calendario oficial. Si alguno no aparece, lo
+    // dejamos visible en la consola para corregirlo (pero la app sigue
+    // funcionando con el resto).
+    QUINIELA_1X2_MATCHES.forEach(m => {
+      const list = GROUP_MATCHES_BY_GROUP[m.group] || [];
+      const found = list.find(x => x.key === m.key);
+      if (!found) {
+        console.warn('[quiniela1x2] El partido predefinido no se encontró en la fase de grupos oficial:', m);
+      } else {
+        m.date = found.date || '';
+        m.time = found.time || '';
+        m.round = found.round || '';
+        m.ground = found.ground || '';
+      }
+    });
 
     // Build bracket using official 2026 FIFA structure
     KO_TREE = {
@@ -2324,6 +2365,77 @@ function renderGroups() {
 
     card.addEventListener('click', () => openGroupResultsModal(g));
     grid.appendChild(card);
+  });
+}
+
+// ---- Render Quiniela 1X2 ----
+function renderQuiniela1x2() {
+  const container = document.getElementById('quiniela1x2Panel');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const panel = document.createElement('div');
+  panel.className = 'quiniela1x2-panel';
+
+  QUINIELA_1X2_MATCHES.forEach(m => {
+    const pick = state.quiniela1x2?.[m.key] || null;
+    const dateLabel = m.date
+      ? formatMatchDate({ date: m.date, time: m.time })
+      : '';
+
+    const row = document.createElement('div');
+    row.className = 'quiniela1x2-row' + (pick ? ' quiniela1x2-row-picked' : '');
+
+    const labels = ['1', 'X', '2'];
+    const titles = [m.team1 + ' gana', 'Empate', m.team2 + ' gana'];
+
+    row.innerHTML = `
+      <div class="quiniela1x2-meta">
+        <span class="quiniela1x2-group">Grupo ${escapeHtml(m.group)}</span>
+        ${dateLabel ? `<span class="quiniela1x2-date">${escapeHtml(dateLabel)}</span>` : ''}
+      </div>
+      <div class="quiniela1x2-match">
+        <span class="quiniela1x2-team quiniela1x2-team-home">
+          <span class="team-flag ${getTeamFlagClass(m.team1)}"></span>
+          <span class="team-name">${escapeHtml(m.team1)}</span>
+        </span>
+        <span class="quiniela1x2-vs">vs</span>
+        <span class="quiniela1x2-team quiniela1x2-team-away">
+          <span class="team-name">${escapeHtml(m.team2)}</span>
+          <span class="team-flag ${getTeamFlagClass(m.team2)}"></span>
+        </span>
+      </div>
+      <div class="quiniela1x2-picks" role="group" aria-label="Pronóstico ${escapeHtml(m.team1)} vs ${escapeHtml(m.team2)}">
+        ${labels.map((lbl, i) => `
+          <button type="button"
+                  class="quiniela1x2-pick-btn${pick === lbl ? ' quiniela1x2-pick-active' : ''}"
+                  data-key="${escapeHtml(m.key)}"
+                  data-pick="${lbl}"
+                  aria-pressed="${pick === lbl ? 'true' : 'false'}"
+                  title="${escapeHtml(titles[i])}">${lbl}</button>
+        `).join('')}
+      </div>
+    `;
+
+    panel.appendChild(row);
+  });
+
+  container.appendChild(panel);
+
+  panel.querySelectorAll('.quiniela1x2-pick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.key;
+      const pick = btn.dataset.pick;
+      if (!state.quiniela1x2) state.quiniela1x2 = {};
+      if (state.quiniela1x2[key] === pick) {
+        // Click sobre el mismo botón = deseleccionar
+        delete state.quiniela1x2[key];
+      } else {
+        state.quiniela1x2[key] = pick;
+      }
+      renderQuiniela1x2();
+      saveLocalPredictionSoon();
+    });
   });
 }
 
@@ -3263,6 +3375,7 @@ function buildPayload() {
     groupsConfirmed: { ...(state.groupsConfirmed || {}) },
     thirdPlace: state.thirdPlace.filter(Boolean),
     thirdPlaceConfirmed: Boolean(state.thirdPlaceConfirmed),
+    quiniela1x2: { ...(state.quiniela1x2 || {}) },
     knockout: {
       round32: winners(r32nums),
       round16: winners(r16nums),
@@ -3453,6 +3566,7 @@ function scorePrediction(prediction, results = RESULTS) {
     if (predictionResultStatus(predGroup[0], realGroup[0]) === 'correct') score += puntuaciones.grupos.posicion.primero;
     if (predictionResultStatus(predGroup[1], realGroup[1]) === 'correct') score += puntuaciones.grupos.posicion.segundo;
     if (predictionResultStatus(predGroup[2], realGroup[2]) === 'correct') score += puntuaciones.grupos.posicion.tercero;
+    if (predictionResultStatus(predGroup[3], realGroup[3]) === 'correct') score += puntuaciones.grupos.posicion.cuarto;
   });
 
   // Mejores terceros: 1 punto por cada equipo que el usuario haya clasificado
@@ -3461,6 +3575,15 @@ function scorePrediction(prediction, results = RESULTS) {
   const realThirdsTop8 = new Set((results.thirdPlace || []).filter(Boolean).slice(0, 8));
   predThirdsTop8.forEach(team => {
     if (realThirdsTop8.has(team)) score += puntuaciones.grupos.mejorTercero;
+  });
+
+  // Quiniela 1X2: 1 punto por cada acierto.
+  const predQ = prediction.quiniela1x2 || {};
+  const realQ = results.quiniela1x2 || {};
+  QUINIELA_1X2_MATCHES.forEach(m => {
+    const real = realQ[m.key];
+    const pred = predQ[m.key];
+    if (real && pred && real === pred) score += puntuaciones.quiniela1x2;
   });
 
   score += getKnockoutScoreBreakdown(prediction, results);
@@ -3604,10 +3727,9 @@ function openScoringHelpModal() {
         <div class="scoring-help-card">
           <h4>🌍 Fase de grupos</h4>
           <ul>
-            <li>Acertar 1º exacto de grupo: <strong>${puntuaciones.grupos.posicion.primero} pts</strong></li>
-            <li>Acertar 2º exacto de grupo: <strong>${puntuaciones.grupos.posicion.segundo} pts</strong></li>
-            <li>Acertar 3º exacto de grupo: <strong>${puntuaciones.grupos.posicion.tercero} pts</strong></li>
-            <li>Cada mejor tercero (top 8) acertado: <strong>${puntuaciones.grupos.mejorTercero} pt</strong></li>
+            <li>Acertar la posición exacta de cada equipo dentro de su grupo (1º, 2º, 3º o 4º): <strong>${puntuaciones.grupos.posicion.primero} pts por equipo acertado</strong></li>
+            <li>Cada mejor tercero (top 8) acertado: <strong>${puntuaciones.grupos.mejorTercero} pts</strong></li>
+            <li>Quiniela 1X2 (3 partidos): <strong>${puntuaciones.quiniela1x2} pt por acierto</strong></li>
           </ul>
           <p class="scoring-help-small">Solo se acierta arrastrando los equipos en el orden correcto. No hay marcadores exactos.</p>
         </div>
@@ -3615,7 +3737,6 @@ function openScoringHelpModal() {
         <div class="scoring-help-card">
           <h4>🥊 Eliminatorias</h4>
           <ul>
-            <li>Equipo en dieciseisavos: <strong>${puntuaciones.eliminatorias.round32} pts</strong></li>
             <li>Equipo en octavos: <strong>${puntuaciones.eliminatorias.round16} pts</strong></li>
             <li>Equipo en cuartos: <strong>${puntuaciones.eliminatorias.quarterfinals} pts</strong></li>
             <li>Equipo en semifinales: <strong>${puntuaciones.eliminatorias.semifinals} pts</strong></li>
@@ -3659,6 +3780,9 @@ function renderPredictionReview(entry) {
       <h4>Fase de grupos</h4>
       <div class="review-groups" id="reviewGroups"></div>
 
+      <h4>🎯 Quiniela 1X2</h4>
+      <div class="review-section" id="reviewQuiniela1x2"></div>
+
       <h4>Knockout</h4>
       <div class="review-section" id="reviewKnockout"></div>
 
@@ -3668,6 +3792,7 @@ function renderPredictionReview(entry) {
   `;
 
   renderReviewGroups(entry.prediction, entry);
+  renderReviewQuiniela1x2(entry.prediction);
   renderReviewKnockout(entry.prediction);
   renderReviewAwards(entry.prediction);
 }
@@ -3702,6 +3827,7 @@ function getPredictedGroupPositionPoints(team, idx, realOrder) {
   if (idx === 0) return puntuaciones.grupos.posicion.primero;
   if (idx === 1) return puntuaciones.grupos.posicion.segundo;
   if (idx === 2) return puntuaciones.grupos.posicion.tercero;
+  if (idx === 3) return puntuaciones.grupos.posicion.cuarto;
   return 0;
 }
 
@@ -4362,6 +4488,50 @@ function renderReviewKnockout(prediction) {
   container.appendChild(pane);
 }
 
+function renderReviewQuiniela1x2(prediction) {
+  const container = document.getElementById('reviewQuiniela1x2');
+  if (!container) return;
+  container.className = 'review-section quiniela1x2-review';
+  container.innerHTML = '';
+
+  const predQ = prediction.quiniela1x2 || {};
+  const realQ = (RESULTS && RESULTS.quiniela1x2) || {};
+
+  QUINIELA_1X2_MATCHES.forEach(m => {
+    const pred = predQ[m.key] || '';
+    const real = realQ[m.key] || '';
+    const resolved = Boolean(real);
+    const correct = resolved && pred && pred === real;
+    const wrong = resolved && pred && pred !== real;
+    const points = correct ? puntuaciones.quiniela1x2 : 0;
+
+    const row = document.createElement('div');
+    row.className =
+      'quiniela1x2-review-row' +
+      (correct ? ' review-correct' : '') +
+      (wrong ? ' review-wrong' : '') +
+      (!resolved ? ' review-pending' : '');
+
+    row.innerHTML = `
+      <div class="quiniela1x2-review-match">
+        <span class="team-flag ${getTeamFlagClass(m.team1)}"></span>
+        <span class="team-name">${escapeHtml(m.team1)}</span>
+        <span class="quiniela1x2-vs">vs</span>
+        <span class="team-name">${escapeHtml(m.team2)}</span>
+        <span class="team-flag ${getTeamFlagClass(m.team2)}"></span>
+        <small class="quiniela1x2-review-group">(Grupo ${escapeHtml(m.group)})</small>
+      </div>
+      <div class="quiniela1x2-review-picks">
+        <span class="quiniela1x2-review-pick" title="Tu apuesta">Tuya: <strong>${pred ? escapeHtml(pred) : '—'}</strong></span>
+        <span class="quiniela1x2-review-pick" title="Resultado real">Real: <strong>${resolved ? escapeHtml(real) : '—'}</strong></span>
+        ${renderReviewPointsBadge(points, 'Puntos por este 1X2')}
+      </div>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
 function renderReviewAwards(prediction) {
   const container = document.getElementById('reviewAwards');
   container.className = 'awards-section';
@@ -4512,6 +4682,7 @@ function renderAll() {
   buildTPAllocation();
   computeMatchTeams();
   renderGroups();
+  renderQuiniela1x2();
   renderBestThirds();
   renderThirdPlace();
   renderBracket();
@@ -4527,6 +4698,7 @@ function resetState() {
   state.groupsConfirmed = {};
   state.thirdPlace = [];
   state.thirdPlaceConfirmed = false;
+  state.quiniela1x2 = {};
   ensureGroupsInitialized();
 
   state.knockoutResults = {};

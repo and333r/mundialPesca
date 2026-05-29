@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiniela LKS Next — Mundial 2026</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
-  <link rel="stylesheet" href="style.css?v=lksnext-picker-search-most-conceded">
+  <link rel="stylesheet" href="style.css?v=quiniela-1x2">
 </head>
 <body>
 
@@ -35,6 +35,11 @@
       <h2 class="section-title">&#127758; Fase de grupos</h2>
       <p class="note-text">Arrastra las selecciones (o usa las flechas ▲▼) para colocar cada grupo en el orden que crees que va a quedar. <strong>1º y 2º pasan directos</strong>; <strong>3º entra al sorteo de mejores terceros</strong>.</p>
       <div class="groups-grid" id="groupsGrid"></div>
+
+      <!-- Quiniela 1X2 -->
+      <h2 class="section-title">&#127919; Quiniela 1X2 (punto extra)</h2>
+      <p class="note-text">3 partidos sorteados de la fase de grupos (¡y uno de <strong>España</strong> de regalo!). Marca <strong>1</strong> si gana el equipo local, <strong>X</strong> si crees que empatan, <strong>2</strong> si gana el visitante. <strong>Cada acierto suma 1 punto extra</strong> al ranking.</p>
+      <div id="quiniela1x2Panel"></div>
 
       <!-- Best thirds -->
       <h2 class="section-title">🥉 Mejores terceros</h2>
@@ -120,7 +125,7 @@
   <div class="confetti-container" id="confettiContainer"></div>
 
   <script src="third_place_table.js?v=group-order-drag-and-new-awards"></script>
-  <script src="results.js?v=most-conceded-team"></script>
+  <script src="results.js?v=quiniela-1x2"></script>
   <script src="app.js?v=teams-in-spanish"></script>
   <div class="name-modal-overlay" id="nameModal" style="display:none;">
   <div class="name-modal">
