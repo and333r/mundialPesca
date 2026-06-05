@@ -4761,10 +4761,12 @@ function openNameModal() {
   const input = document.getElementById('playerNameInput');
   const teamSelect = document.getElementById('teamSelect');
   const confirmBtn = document.getElementById('confirmNameSubmit');
+  const hintEl = document.getElementById('nameModalUpdateHint');
 
   modal.style.display = 'flex';
   input.value = '';
   if (teamSelect) teamSelect.value = '';
+  if (hintEl) hintEl.style.display = 'none';
   if (confirmBtn) {
     confirmBtn.textContent = 'Apostar fuerte (No hay vuelta atrás)';
     confirmBtn.dataset.isUpdate = '';
