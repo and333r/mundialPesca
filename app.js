@@ -4819,6 +4819,9 @@ function updateSubmitButton() {
     hint = document.createElement('div');
     hint.id = 'submitHint';
     hint.className = 'submit-hint';
+    hint.setAttribute('role', 'status');
+    hint.setAttribute('aria-live', 'polite');
+    hint.setAttribute('aria-atomic', 'true');
     btn.parentNode.insertBefore(hint, btn.nextSibling);
   }
 
@@ -4826,8 +4829,10 @@ function updateSubmitButton() {
     hint.innerHTML = '<strong>⚠️ Rellena estos campos antes de enviar:</strong><ul>' +
       missing.map(m => '<li>' + escapeHtml(m) + '</li>').join('') + '</ul>';
     hint.style.display = '';
+    btn.setAttribute('aria-describedby', 'submitHint');
   } else {
     hint.style.display = 'none';
+    btn.removeAttribute('aria-describedby');
   }
 }
 
