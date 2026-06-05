@@ -4848,7 +4848,7 @@ async function confirmSubmitPrediction() {
     if (isUpdate) {
       showToast('¡Porra actualizada! En unos segundos se refleja en el ranking. ¡Que ruede el balón!');
     } else {
-      showToast('¡Apuesta registrada! Tarda unos segundos en asomar por el ranking. Mucha suerte, crack de LKS Next.');
+      showToast('¡Apuesta registrada! Tarda unos segundos en asomar por el ranking. Mucha suerte, espero que no ganes tu.');
     }
   } catch(e) {
     hideLoading();
