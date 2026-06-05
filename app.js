@@ -3639,12 +3639,22 @@ function scorePrediction(prediction, results = RESULTS) {
 
 // ---- Leaderboard ----
 
+// Cache of submission names (lowercase) populated when the leaderboard loads.
+// Used to detect duplicate-name submissions and show an update warning.
+const knownSubmissionNames = new Set();
+
 async function loadLeaderboard() {
+  knownSubmissionNames.clear();
+
   const res = await fetch(LEADERBOARD_CSV_URL);
   const csv = await res.text();
 
   const rows = parseCSV(csv);
-  const submissions = [];
+  // Use a Map keyed by normalized lowercase name so that later rows
+  // (= more recent submissions) silently overwrite earlier ones for the same
+  // person, while anonymous rows remain as separate entries.
+  const submissionsByName = new Map();
+  const anonymousSubmissions = [];
 
   rows.slice(1).forEach(row => {
     const rawJson = row[1];
@@ -3652,16 +3662,27 @@ async function loadLeaderboard() {
 
     try {
       const prediction = JSON.parse(rawJson);
-      submissions.push({
-        name: prediction.name || 'Anonymous',
+      const trimmedName = typeof prediction.name === 'string' ? prediction.name.trim() : '';
+      const submission = {
+        name: trimmedName || 'Anonymous',
         score: scorePrediction(prediction),
         prediction
-      });
+      };
+
+      if (trimmedName) {
+        submissionsByName.set(trimmedName.toLowerCase(), submission);
+      } else {
+        anonymousSubmissions.push(submission);
+      }
     } catch (e) {
       console.warn('Invalid prediction JSON:', rawJson);
     }
   });
 
+  // Refresh the names cache so the submit modal can warn about updates.
+  submissionsByName.forEach((_, key) => knownSubmissionNames.add(key));
+
+  const submissions = [...submissionsByName.values(), ...anonymousSubmissions];
   submissions.sort((a, b) => b.score - a.score);
   renderLeaderboardList(submissions);
 }
@@ -4748,15 +4769,43 @@ function openNameModal() {
   const modal = document.getElementById('nameModal');
   const input = document.getElementById('playerNameInput');
   const teamSelect = document.getElementById('teamSelect');
+  const confirmBtn = document.getElementById('confirmNameSubmit');
+  const hintEl = document.getElementById('nameModalUpdateHint');
 
   modal.style.display = 'flex';
   input.value = '';
   if (teamSelect) teamSelect.value = '';
+  if (hintEl) hintEl.style.display = 'none';
+  if (confirmBtn) {
+    confirmBtn.textContent = 'Apostar fuerte (No hay vuelta atrás)';
+    confirmBtn.dataset.isUpdate = '';
+  }
   setTimeout(() => input.focus(), 50);
 }
 
 function closeNameModal() {
   document.getElementById('nameModal').style.display = 'none';
+}
+
+function updateNameModalHint() {
+  const input = document.getElementById('playerNameInput');
+  const confirmBtn = document.getElementById('confirmNameSubmit');
+  const hintEl = document.getElementById('nameModalUpdateHint');
+  if (!input || !confirmBtn) return;
+
+  const name = input.value.trim();
+  const isUpdate = name && knownSubmissionNames.has(name.toLowerCase());
+
+  if (hintEl) {
+    hintEl.style.display = isUpdate ? '' : 'none';
+  }
+  if (isUpdate) {
+    confirmBtn.textContent = '🔄 Actualizar porra';
+    confirmBtn.dataset.isUpdate = '1';
+  } else {
+    confirmBtn.textContent = 'Apostar fuerte (No hay vuelta atrás)';
+    confirmBtn.dataset.isUpdate = '';
+  }
 }
 
 async function confirmSubmitPrediction() {
@@ -4784,6 +4833,8 @@ async function confirmSubmitPrediction() {
     return;
   }
 
+  const isUpdate = knownSubmissionNames.has(playerName.toLowerCase());
+
   const payload = buildPayload();
   payload.name = playerName;
   payload.team = playerTeam;
@@ -4793,7 +4844,7 @@ async function confirmSubmitPrediction() {
   params.append(ENTRY_ID, JSON.stringify(payload));
 
   closeNameModal();
-  showLoading('Publicando...');
+  showLoading(isUpdate ? 'Actualizando porra...' : 'Publicando...');
 
   try {
     await fetch(FORM_ACTION, {
@@ -4804,8 +4855,13 @@ async function confirmSubmitPrediction() {
     });
 
     hideLoading();
+    knownSubmissionNames.add(playerName.toLowerCase());
     fireConfetti();
-    showToast('¡Apuesta registrada! Tarda unos segundos en asomar por el ranking. Mucha suerte, crack de LKS Next.');
+    if (isUpdate) {
+      showToast('¡Porra actualizada! En unos segundos se refleja en el ranking. ¡Que ruede el balón!');
+    } else {
+      showToast('¡Apuesta registrada! Tarda unos segundos en asomar por el ranking. Mucha suerte, espero que no ganes tú.');
+    }
   } catch(e) {
     hideLoading();
     showToast('Algo ha petado al enviar. Inténtalo otra vez o avisa al de sistemas (a ver si te hace caso).', true);
@@ -4892,6 +4948,7 @@ async function init() {
     if (e.key === 'Enter') confirmSubmitPrediction();
     if (e.key === 'Escape') closeNameModal();
   });
+  document.getElementById('playerNameInput').addEventListener('input', updateNameModalHint);
 
   document.getElementById('closePredictionModal').addEventListener('click', closePredictionModal);
 
