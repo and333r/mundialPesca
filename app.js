@@ -987,7 +987,7 @@ const AWARD_PLAYERS = [
   // España
   { name: 'Unai Simón', country: 'España' },
   { name: 'David Raya', country: 'España' },
-  { name: 'Álex Remiro', country: 'España' },
+  { name: 'Joan Garcia', country: 'España' },
   { name: 'Dani Carvajal', country: 'España' },
   { name: 'Pau Cubarsí', country: 'España' },
   { name: 'Aymeric Laporte', country: 'España' },
@@ -1011,6 +1011,7 @@ const AWARD_PLAYERS = [
   { name: 'Álvaro Morata', country: 'España' },
   { name: 'Álex Baena', country: 'España' },
   { name: 'Mikel Oyarzabal', country: 'España' },
+  { name: 'Ferran Torres', country: 'España' },
   { name: 'Adrian Zurdito Garcia', country: 'España' },
 
   // Uruguay
