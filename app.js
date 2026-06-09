@@ -819,7 +819,7 @@ const AWARD_PLAYERS = [
   // Bélgica
   { name: 'Koen Casteels', country: 'Bélgica' },
   { name: 'Matz Sels', country: 'Bélgica' },
-  { name: 'Thomas Kaminski', country: 'Bélgica' },
+  { name: 'Thibaut Nogales Courtois', country: 'Bélgica' },
   { name: 'Jan Vertonghen', country: 'Bélgica' },
   { name: 'Wout Faes', country: 'Bélgica' },
   { name: 'Arthur Theate', country: 'Bélgica' },
