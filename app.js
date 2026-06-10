@@ -4,9 +4,9 @@
    ============================================================ */
 
 const DATA_SRC = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026';
-const LEADERBOARD_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDwcurPFZ1PgxTQ_o_D4D4Xjboy1lUrU711uWdLIKXVnWofbf_CwGEeaTL0VaLAX7SOHlRYBCuybu_/pub?gid=1132102352&single=true&output=csv'
-const FORM_ID = '1FAIpQLSd9OPSO4JwC6aDS0dtN9FkpmIiCCijgQztklxLC410HTgvjUg';
-const ENTRY_ID = 'entry.479239932';
+const LEADERBOARD_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4grnhi7VY7FpRX_WrCVZjSrU2D8TGXjIwbi6LXwBWZkk3LflfE1hk0LXhRmVY0WR4Zosqdu9IVJsk/pub?output=csv'
+const FORM_ID = '1JFpWIU56_j5B698vVjmeMAaXaqdPObpjH2ADMC2eRLg';
+const ENTRY_ID = 'entry.496944209';
 
 const puntuaciones = {
   grupos: {
