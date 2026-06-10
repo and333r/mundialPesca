@@ -3729,17 +3729,11 @@ function parseCSV(csv) {
 }
 
 const LKS_TEAMS = [
-  'Consultoría Tecnológica',
-  'Consultoría de Negocio',
-  'Legal',
-  'Servicios Generales'
+  'Todos'
 ];
 
 const TEAM_EMOJIS = {
-  'Consultoría Tecnológica': '💻',
-  'Consultoría de Negocio': '📊',
-  Legal: '⚖️',
-  'Servicios Generales': '🏢'
+  'Todos': '🌍'
 };
 
 function populateTeamSelectOptions() {
@@ -3772,6 +3766,7 @@ function renderLeaderboardList(submissions) {
   filterBar.appendChild(allBtn);
 
   LKS_TEAMS.forEach(team => {
+    if (team === 'Todos') return;
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'team-filter-btn';
@@ -4856,7 +4851,7 @@ function openNameModal() {
 
   modal.style.display = 'flex';
   input.value = '';
-  if (teamSelect) teamSelect.value = '';
+  if (teamSelect) teamSelect.value = 'Todos';
   if (hintEl) hintEl.style.display = 'none';
   if (confirmBtn) {
     confirmBtn.textContent = 'Apostar fuerte (No hay vuelta atrás)';
