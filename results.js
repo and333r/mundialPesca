@@ -16,64 +16,64 @@ const RESULTS = {
   "thirdPlace": [],
   "groupMatches": {
     "A": {
-      "Mexico__South Africa": { "home": 2, "away": 0 },
-      "South Korea__Czech Republic": { "home": 2, "away": 1 },
-      "Czech Republic__South Africa": { "home": 1, "away": 1 },
-      "Mexico__South Korea": { "home": 1, "away": 0 }
+      "México__Sudáfrica": { "home": 2, "away": 0 },
+      "Corea del Sur__República Checa": { "home": 2, "away": 1 },
+      "República Checa__Sudáfrica": { "home": 1, "away": 1 },
+      "México__Corea del Sur": { "home": 1, "away": 0 }
     },
     "B": {
-      "Canada__Bosnia & Herzegovina": { "home": 1, "away": 1 },
-      "Qatar__Switzerland": { "home": 1, "away": 1 },
-      "Switzerland__Bosnia & Herzegovina": { "home": 4, "away": 1 },
-      "Canada__Qatar": { "home": 6, "away": 0 }
+      "Canadá__Bosnia y Herzegovina": { "home": 1, "away": 1 },
+      "Catar__Suiza": { "home": 1, "away": 1 },
+      "Suiza__Bosnia y Herzegovina": { "home": 4, "away": 1 },
+      "Canadá__Catar": { "home": 6, "away": 0 }
     },
     "C": {
-      "Brazil__Morocco": { "home": 1, "away": 1 },
-      "Haiti__Scotland": { "home": 0, "away": 1 },
-      "Scotland__Morocco": { "home": 0, "away": 1 },
-      "Brazil__Haiti": { "home": 3, "away": 0 }
+      "Brasil__Marruecos": { "home": 1, "away": 1 },
+      "Haití__Escocia": { "home": 0, "away": 1 },
+      "Escocia__Marruecos": { "home": 0, "away": 1 },
+      "Brasil__Haití": { "home": 3, "away": 0 }
     },
     "D": {
-      "USA__Paraguay": { "home": 4, "away": 1 },
-      "Australia__Turkey": { "home": 2, "away": 0 },
-      "USA__Australia": { "home": 2, "away": 0 },
-      "Turkey__Paraguay": { "home": 0, "away": 1 }
+      "Estados Unidos__Paraguay": { "home": 4, "away": 1 },
+      "Australia__Turquía": { "home": 2, "away": 0 },
+      "Estados Unidos__Australia": { "home": 2, "away": 0 },
+      "Turquía__Paraguay": { "home": 0, "away": 1 }
     },
     "E": {
-      "Germany__Curaçao": { "home": 7, "away": 1 },
-      "Ivory Coast__Ecuador": { "home": 1, "away": 0 },
-      "Germany__Ivory Coast": { "home": 2, "away": 1 },
-      "Ecuador__Curaçao": { "home": 0, "away": 0 }
+      "Alemania__Curazao": { "home": 7, "away": 1 },
+      "Costa de Marfil__Ecuador": { "home": 1, "away": 0 },
+      "Alemania__Costa de Marfil": { "home": 2, "away": 1 },
+      "Ecuador__Curazao": { "home": 0, "away": 0 }
     },
     "F": {
-      "Netherlands__Japan": { "home": 2, "away": 2 },
-      "Sweden__Tunisia": { "home": 5, "away": 1 },
-      "Netherlands__Sweden": { "home": 5, "away": 1 },
-      "Tunisia__Japan": { "home": 0, "away": 4 }
+      "Países Bajos__Japón": { "home": 2, "away": 2 },
+      "Suecia__Túnez": { "home": 5, "away": 1 },
+      "Países Bajos__Suecia": { "home": 5, "away": 1 },
+      "Túnez__Japón": { "home": 0, "away": 4 }
     },
     "G": {
-      "Belgium__Egypt": { "home": 1, "away": 1 },
-      "Iran__New Zealand": { "home": 2, "away": 2 }
+      "Bélgica__Egipto": { "home": 1, "away": 1 },
+      "Irán__Nueva Zelanda": { "home": 2, "away": 2 }
     },
     "H": {
-      "Spain__Cape Verde": { "home": 0, "away": 0 },
-      "Saudi Arabia__Uruguay": { "home": 1, "away": 1 }
+      "España__Cabo Verde": { "home": 0, "away": 0 },
+      "Arabia Saudí__Uruguay": { "home": 1, "away": 1 }
     },
     "I": {
-      "France__Senegal": { "home": 3, "away": 1 },
-      "Iraq__Norway": { "home": 1, "away": 4 }
+      "Francia__Senegal": { "home": 3, "away": 1 },
+      "Irak__Noruega": { "home": 1, "away": 4 }
     },
     "J": {
-      "Argentina__Algeria": { "home": 3, "away": 0 },
-      "Austria__Jordan": { "home": 3, "away": 1 }
+      "Argentina__Argelia": { "home": 3, "away": 0 },
+      "Austria__Jordania": { "home": 3, "away": 1 }
     },
     "K": {
-      "Portugal__DR Congo": { "home": 1, "away": 1 },
-      "Uzbekistan__Colombia": { "home": 1, "away": 3 }
+      "Portugal__RD del Congo": { "home": 1, "away": 1 },
+      "Uzbekistán__Colombia": { "home": 1, "away": 3 }
     },
     "L": {
-      "England__Croatia": { "home": 4, "away": 2 },
-      "Ghana__Panama": { "home": 1, "away": 0 }
+      "Inglaterra__Croacia": { "home": 4, "away": 2 },
+      "Ghana__Panamá": { "home": 1, "away": 0 }
     }
   },
   "knockout": {
