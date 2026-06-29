@@ -20,7 +20,16 @@ const RESULTS = {
     "España__Uruguay":       "2"
   },
   
-  "thirdPlace": [],
+  thirdPlace: [
+    "RD del Congo",     // 4 pts, DG +1
+    "Suecia",           // 4 pts, DG  0, 7 GF
+    "Ecuador",          // 4 pts, DG  0, 2 GF
+    "Ghana",            // 4 pts, DG  0, 2 GF
+    "Bosnia y Herzegovina", // 4 pts, DG -1
+    "Argelia",          // 4 pts, DG -2, 5 GF
+    "Paraguay",         // 4 pts, DG -2, 2 GF
+    "Senegal"           // 3 pts
+  ],
   "groupMatches": {
     "A": {
       "México__Sudáfrica": { "home": 2, "away": 0 },
