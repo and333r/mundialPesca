@@ -1,4 +1,28 @@
+/* ============================================================
+   Resultados oficiales en directo del Mundial 2026.
+   ------------------------------------------------------------
+   Este archivo arranca VACÍO: mientras no haya nada relleno,
+   el ranking muestra a todo el mundo con 0 puntos.
+   A medida que vayas escribiendo resultados aquí (orden final
+   de un grupo, ganadores de eliminatorias, premios, etc.), la
+   app recalcula automáticamente las puntuaciones de cada
+   participante. Lo que dejes vacío ("" o []) sigue contando
+   como "pendiente" y no resta puntos a nadie.
+
+   Si quieres volver a partir de cero, copia el contenido de
+   results-empty.js sobre este archivo.
+   ------------------------------------------------------------
+   Cambios importantes:
+   - YA NO se predicen resultados exactos de partidos: solo el
+     ORDEN en que terminan los equipos en cada grupo.
+     Por eso este archivo no tiene "groupMatches".
+   - "thirdPlace" es la lista de los 8 mejores terceros que
+     pasan a dieciseisavos, en el orden 1º-8º.
+   - "awards" tiene 5 categorías nuevas y divertidas.
+   ============================================================ */
+
 const RESULTS = {
+  // Orden final de cada grupo: 1º, 2º, 3º, 4º.
   groups: {
     A: ["México", "Sudáfrica", "Corea del Sur", "República Checa"],
     B: ["Suiza", "Canadá", "Bosnia y Herzegovina", "Catar"],
@@ -13,13 +37,9 @@ const RESULTS = {
     K: ["Colombia", "Portugal", "RD del Congo", "Uzbekistán"],
     L: ["Inglaterra", "Croacia", "Ghana", "Panamá"]
   },
-  
-  quiniela1x2: {
-    "Corea del Sur__México": "1",
-    "Escocia__Marruecos":    "2",
-    "España__Uruguay":       "2"
-  },
-  
+
+  // Los 8 mejores terceros que clasifican a dieciseisavos,
+  // en orden (1º mejor tercero → 8º mejor tercero).
   thirdPlace: [
     "RD del Congo",     // 4 pts, DG +1
     "Suecia",           // 4 pts, DG  0, 7 GF
@@ -30,70 +50,20 @@ const RESULTS = {
     "Paraguay",         // 4 pts, DG -2, 2 GF
     "Senegal"           // 3 pts
   ],
-  "groupMatches": {
-    "A": {
-      "México__Sudáfrica": { "home": 2, "away": 0 },
-      "Corea del Sur__República Checa": { "home": 2, "away": 1 },
-      "República Checa__Sudáfrica": { "home": 1, "away": 1 },
-      "México__Corea del Sur": { "home": 1, "away": 0 }
-    },
-    "B": {
-      "Canadá__Bosnia y Herzegovina": { "home": 1, "away": 1 },
-      "Catar__Suiza": { "home": 1, "away": 1 },
-      "Suiza__Bosnia y Herzegovina": { "home": 4, "away": 1 },
-      "Canadá__Catar": { "home": 6, "away": 0 }
-    },
-    "C": {
-      "Brasil__Marruecos": { "home": 1, "away": 1 },
-      "Haití__Escocia": { "home": 0, "away": 1 },
-      "Escocia__Marruecos": { "home": 0, "away": 1 },
-      "Brasil__Haití": { "home": 3, "away": 0 }
-    },
-    "D": {
-      "Estados Unidos__Paraguay": { "home": 4, "away": 1 },
-      "Australia__Turquía": { "home": 2, "away": 0 },
-      "Estados Unidos__Australia": { "home": 2, "away": 0 },
-      "Turquía__Paraguay": { "home": 0, "away": 1 }
-    },
-    "E": {
-      "Alemania__Curazao": { "home": 7, "away": 1 },
-      "Costa de Marfil__Ecuador": { "home": 1, "away": 0 },
-      "Alemania__Costa de Marfil": { "home": 2, "away": 1 },
-      "Ecuador__Curazao": { "home": 0, "away": 0 }
-    },
-    "F": {
-      "Países Bajos__Japón": { "home": 2, "away": 2 },
-      "Suecia__Túnez": { "home": 5, "away": 1 },
-      "Países Bajos__Suecia": { "home": 5, "away": 1 },
-      "Túnez__Japón": { "home": 0, "away": 4 }
-    },
-    "G": {
-      "Bélgica__Egipto": { "home": 1, "away": 1 },
-      "Irán__Nueva Zelanda": { "home": 2, "away": 2 }
-    },
-    "H": {
-      "España__Cabo Verde": { "home": 0, "away": 0 },
-      "Arabia Saudí__Uruguay": { "home": 1, "away": 1 }
-    },
-    "I": {
-      "Francia__Senegal": { "home": 3, "away": 1 },
-      "Irak__Noruega": { "home": 1, "away": 4 }
-    },
-    "J": {
-      "Argentina__Argelia": { "home": 3, "away": 0 },
-      "Austria__Jordania": { "home": 3, "away": 1 }
-    },
-    "K": {
-      "Portugal__RD del Congo": { "home": 1, "away": 1 },
-      "Uzbekistán__Colombia": { "home": 1, "away": 3 }
-    },
-    "L": {
-      "Inglaterra__Croacia": { "home": 4, "away": 2 },
-      "Ghana__Panamá": { "home": 1, "away": 0 }
-    }
+
+  // Quiniela 1X2 — resultados reales de los 3 partidos fijos.
+  // Valores admitidos: "1" (gana team1), "X" (empate), "2" (gana team2).
+  // Las claves coinciden con `[team1, team2].sort().join('__')` definido en
+  // QUINIELA_1X2_MATCHES dentro de app.js. Dejar "" mientras el partido no
+  // se haya jugado.
+  quiniela1x2: {
+    "Corea del Sur__México": "1",
+    "Escocia__Marruecos":    "2",
+    "España__Uruguay":       "2"
   },
-  "knockout": {
-     round32: [
+
+  knockout: {
+    round32: [
       // 12 primeros clasificados
       "México", "Suiza", "Brasil", "Estados Unidos",
       "Alemania", "Países Bajos", "Bélgica", "España",
@@ -106,16 +76,19 @@ const RESULTS = {
       "Bosnia y Herzegovina", "Paraguay", "Ecuador", "Suecia",
       "Senegal", "Argelia", "RD del Congo", "Ghana"
     ],
-    "round16": [],
-    "quarterfinals": [],
-    "semifinals": [],
-    "champion": "",
-    "runnerUp": "",
-    "finalists": [],
-    "thirdPlaceWinner": "",
-    "final": "",
-    "thirdPlace": "",
-    "matches": {
+    round16: [],
+    quarterfinals: [],
+    semifinals: [],
+
+    champion: "",
+    runnerUp: "",
+    finalists: [],
+
+    thirdPlaceWinner: "",
+    final: "",
+    thirdPlace: "",
+
+    matches: {
       round32: [
         // Partido 73: 2ºA vs 2ºB
         {match: 73, team1: "Sudáfrica",      team2: "Canadá",              winner: "Canadá"},
@@ -150,20 +123,31 @@ const RESULTS = {
         // Partido 88: 2ºD vs 2ºG
         {match: 88, team1: "Australia",       team2: "Egipto",              winner: ""}
       ],
-      "round16": [],
-      "quarterfinals": [],
-      "semifinals": [],
-      "thirdPlace": [],
-      "final": []
+      round16: [],
+      quarterfinals: [],
+      semifinals: [],
+      thirdPlace: [],
+      final: []
     }
   },
-  "semifinalists": [],
-  "finalists": [],
-  "champion": "",
-  "runnerUp": "",
-  "thirdPlaceWinner": "",
-  "awards": {
-    "goldenBoot": [],
-    "goldenBall": []
+
+  semifinalists: [],
+  finalists: [],
+
+  champion: "",
+  runnerUp: "",
+  thirdPlaceWinner: "",
+
+  // 5 categorías divertidas — todas son una sola elección por categoría.
+  // "topScorer", "topAssister" y "goldenGlove" esperan el NOMBRE de un jugador
+  //   (de los listados en AWARD_PLAYERS dentro de app.js).
+  // "topScoringTeam" y "mostConcededTeam" esperan el NOMBRE de una selección
+  //   (tal y como aparece en los grupos).
+  awards: {
+    topScorer: "",
+    topAssister: "",
+    goldenGlove: "",
+    topScoringTeam: "",
+    mostConcededTeam: ""
   }
 };
