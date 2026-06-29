@@ -20,7 +20,7 @@ const puntuaciones = {
   },
   quiniela1x2: 1,
   eliminatorias: {
-    round32: 0,
+    round32: 2,
     round16: 5,
     quarterfinals: 5,
     semifinals: 10,
@@ -3876,6 +3876,7 @@ function openScoringHelpModal() {
         <div class="scoring-help-card">
           <h4>🥊 Eliminatorias</h4>
           <ul>
+            <li>Equipo en dieciseisavos: <strong>${puntuaciones.eliminatorias.round32} pts</strong></li>
             <li>Equipo en octavos: <strong>${puntuaciones.eliminatorias.round16} pts</strong></li>
             <li>Equipo en cuartos: <strong>${puntuaciones.eliminatorias.quarterfinals} pts</strong></li>
             <li>Equipo en semifinales: <strong>${puntuaciones.eliminatorias.semifinals} pts</strong></li>
@@ -3919,6 +3920,9 @@ function renderPredictionReview(entry) {
       <h4>Fase de grupos</h4>
       <div class="review-groups" id="reviewGroups"></div>
 
+      <h4>🥉 Mejores terceros</h4>
+      <div class="review-section" id="reviewThirdPlace"></div>
+
       <h4>🎯 Quiniela 1X2</h4>
       <div class="review-section" id="reviewQuiniela1x2"></div>
 
@@ -3931,6 +3935,7 @@ function renderPredictionReview(entry) {
   `;
 
   renderReviewGroups(entry.prediction, entry);
+  renderReviewThirdPlace(entry.prediction);
   renderReviewQuiniela1x2(entry.prediction);
   renderReviewKnockout(entry.prediction);
   renderReviewAwards(entry.prediction);
@@ -4170,6 +4175,11 @@ function buildKnockoutReviewState(source) {
 
   const knockout = source.knockout || {};
 
+  // Partidos definidos explícitamente en results.js (formato knockout.matches).
+  // Sus equipos NO deben recalcularse desde el cuadro, porque los resultados
+  // oficiales son la fuente de verdad.
+  const explicitMatchNums = new Set();
+
   function setExplicitMatch(item) {
     if (!item || item.match === undefined || item.match === null) return;
     const matchNum = Number(item.match);
@@ -4180,11 +4190,33 @@ function buildKnockoutReviewState(source) {
         team1: item.team1 || null,
         team2: item.team2 || null
       };
+      explicitMatchNums.add(matchNum);
     }
 
     if (item.winner) {
       state.knockoutResults[matchNum] = item.winner;
     }
+  }
+
+  // Re-resuelve los equipos de las rondas posteriores a 32avos a partir de los
+  // ganadores ya conocidos (winner_of / loser_of), sin pisar los partidos
+  // definidos explícitamente. Necesario para que, al rellenar los ganadores de
+  // 32avos en results.js, los equipos de octavos (y siguientes) se propaguen y
+  // sus puntos se contabilicen.
+  function resolveDerivedTeams() {
+    [
+      KO_TREE.round16,
+      KO_TREE.quarterfinals,
+      KO_TREE.semifinals,
+      KO_TREE.thirdPlace,
+      KO_TREE.final
+    ].forEach(round => (round || []).forEach(m => {
+      if (explicitMatchNums.has(m.num)) return;
+      state.matchTeams[m.num] = {
+        team1: getSlotTeam(m.slot1),
+        team2: getSlotTeam(m.slot2)
+      };
+    }));
   }
 
   function setWinnerIfPossible(match, team) {
@@ -4221,11 +4253,16 @@ function buildKnockoutReviewState(source) {
   }
 
   applyRound('round32', KO_TREE.round32 || []);
+  resolveDerivedTeams();
   applyRound('round16', KO_TREE.round16 || []);
+  resolveDerivedTeams();
   applyRound('quarterfinals', KO_TREE.quarterfinals || []);
+  resolveDerivedTeams();
   applyRound('semifinals', KO_TREE.semifinals || []);
+  resolveDerivedTeams();
   applyRound('thirdPlace', KO_TREE.thirdPlace || []);
   applyRound('final', KO_TREE.final || []);
+  resolveDerivedTeams();
 
   // Legacy fallbacks for old results/predictions without knockout.matches.final
   // or knockout.matches.thirdPlace.
@@ -4621,6 +4658,57 @@ function renderReviewKnockout(prediction) {
 
   pane.appendChild(predictedBracket);
   container.appendChild(pane);
+}
+
+function renderReviewThirdPlace(prediction) {
+  const container = document.getElementById('reviewThirdPlace');
+  if (!container) return;
+  container.className = 'review-section third-place-review';
+  container.innerHTML = '';
+
+  const predRanking = (prediction.thirdPlace || []).filter(Boolean);
+  const predTop8 = predRanking.slice(0, 8);
+  const realTop8List = (RESULTS.thirdPlace || []).filter(Boolean).slice(0, 8);
+  const realTop8 = new Set(realTop8List);
+  const resolved = realTop8.size > 0;
+
+  if (predTop8.length === 0) {
+    container.innerHTML = '<p class="note-text">Sin predicción de mejores terceros.</p>';
+    return;
+  }
+
+  const totalPoints = calculateThirdPlaceReviewPoints(prediction);
+
+  const header = document.createElement('div');
+  header.className = 'third-place-review-header';
+  header.innerHTML = `
+    <span class="third-place-review-title">Clasificación apostada (8 mejores terceros)</span>
+    <span class="review-group-total-points ${totalPoints > 0 ? 'got-points' : 'no-points'}" title="Total de puntos en mejores terceros">+${totalPoints}pt</span>
+  `;
+  container.appendChild(header);
+
+  predTop8.forEach((team, idx) => {
+    const qualified = resolved && realTop8.has(team);
+    const wrong = resolved && !qualified;
+    const points = qualified ? puntuaciones.grupos.mejorTercero : 0;
+
+    const row = document.createElement('div');
+    row.className =
+      'third-place-review-row' +
+      (qualified ? ' review-correct' : '') +
+      (wrong ? ' review-wrong' : '') +
+      (!resolved ? ' review-pending' : '');
+
+    row.innerHTML = `
+      <span class="position-badge">${idx + 1}</span>
+      <span class="team-flag ${getTeamFlagClass(team)}"></span>
+      <span class="team-name">${escapeHtml(team)}</span>
+      <span class="third-place-review-status">${resolved ? (qualified ? '✓ clasifica' : '✗ no clasifica como 3º') : 'pendiente'}</span>
+      ${renderReviewPointsBadge(points, `Puntos por este tercero (${puntuaciones.grupos.mejorTercero}pt si clasifica entre los 8 mejores)`)}
+    `;
+
+    container.appendChild(row);
+  });
 }
 
 function renderReviewQuiniela1x2(prediction) {

@@ -76,7 +76,7 @@ const RESULTS = {
       "Bosnia y Herzegovina", "Paraguay", "Ecuador", "Suecia",
       "Senegal", "Argelia", "RD del Congo", "Ghana"
     ],
-    round16: [],
+    round16: ["Canadá"], // Canadá (gana 73 a Sudáfrica) es, de momento, el único en octavos
     quarterfinals: [],
     semifinals: [],
 
