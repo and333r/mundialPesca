@@ -99,17 +99,17 @@ const RESULTS = {
         // Partido 76: 1ºC vs 2ºF
         {match: 76, team1: "Brasil",          team2: "Japón",               winner: "Brasil"},
         // Partido 77: 1ºI vs 3ºF
-        {match: 77, team1: "Francia",         team2: "Suecia",              winner: ""},
+        {match: 77, team1: "Francia",         team2: "Suecia",              winner: "Francia"},
         // Partido 78: 2ºE vs 2ºI
-        {match: 78, team1: "Costa de Marfil", team2: "Noruega",             winner: ""},
+        {match: 78, team1: "Costa de Marfil", team2: "Noruega",             winner: "Noruega"},
         // Partido 79: 1ºA vs 3ºE
-        {match: 79, team1: "México",          team2: "Ecuador",             winner: ""},
+        {match: 79, team1: "México",          team2: "Ecuador",             winner: "México"},
         // Partido 80: 1ºL vs 3ºK
-        {match: 80, team1: "Inglaterra",      team2: "RD del Congo",        winner: ""},
+        {match: 80, team1: "Inglaterra",      team2: "RD del Congo",        winner: "Inglaterra"},
         // Partido 81: 1ºD vs 3ºB
-        {match: 81, team1: "Estados Unidos",  team2: "Bosnia y Herzegovina",winner: ""},
+        {match: 81, team1: "Estados Unidos",  team2: "Bosnia y Herzegovina",winner: "Estados Unidos"},
         // Partido 82: 1ºG vs 3ºI
-        {match: 82, team1: "Bélgica",         team2: "Senegal",             winner: ""},
+        {match: 82, team1: "Bélgica",         team2: "Senegal",             winner: "Bélgica"},
         // Partido 83: 2ºK vs 2ºL
         {match: 83, team1: "Portugal",        team2: "Croacia",             winner: ""},
         // Partido 84: 1ºH vs 2ºJ
